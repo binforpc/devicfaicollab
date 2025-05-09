@@ -665,12 +665,7 @@
 
     <!-- ========== SCRIPTS ========== -->
     <script>
-      (function () {
-        const s = document.createElement("script");
-        s.src = "https://vercel.live/_vercel/insights/script.js";
-        s.defer = true;
-        document.body.appendChild(s);
-      })();
+      
       function toggleMenu() {
         const navLinks = document.getElementById("navLinks");
         const menuToggle = document.querySelector(".menu-toggle");
@@ -902,6 +897,12 @@
         fetchMyProjects();
         fetchMyAds();
       });
+      (function () {
+        const s = document.createElement("script");
+        s.src = "https://vercel.live/_vercel/insights/script.js";
+        s.defer = true;
+        document.body.appendChild(s);
+      })();
     </script>
   </body>
 </html>

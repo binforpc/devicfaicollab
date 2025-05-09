@@ -253,12 +253,7 @@
     </div>
 
     <script>
-      (function () {
-        const s = document.createElement("script");
-        s.src = "https://vercel.live/_vercel/insights/script.js";
-        s.defer = true;
-        document.body.appendChild(s);
-      })();
+      
       // Modal Alert
       function showModalAlert(message, isError = false) {
         const overlay = document.getElementById('modal-alert');
@@ -324,6 +319,12 @@
           showModalAlert(decodeURIComponent(err), true);
         }
       });
+      (function () {
+        const s = document.createElement("script");
+        s.src = "https://vercel.live/_vercel/insights/script.js";
+        s.defer = true;
+        document.body.appendChild(s);
+      })();
     </script>
   </body>
 </html>

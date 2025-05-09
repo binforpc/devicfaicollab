@@ -651,12 +651,6 @@
     </footer>
 
     <script>
-      (function () {
-        const s = document.createElement("script");
-        s.src = "https://vercel.live/_vercel/insights/script.js";
-        s.defer = true;
-        document.body.appendChild(s);
-      })();
       // Mobile menu toggle + outside click close
       const menuToggle = document.getElementById('menuToggle');
       const navLinks = document.getElementById('navLinks');
@@ -763,6 +757,12 @@
       function viewProject(id) {
         window.location.href = `/project/${id}`;
       }
+      (function () {
+        const s = document.createElement("script");
+        s.src = "https://vercel.live/_vercel/insights/script.js";
+        s.defer = true;
+        document.body.appendChild(s);
+      })();
     </script>
   </body>
 </html>
