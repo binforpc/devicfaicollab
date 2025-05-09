@@ -509,6 +509,12 @@
     </div>
 
     <script>
+      (function () {
+        const s = document.createElement("script");
+        s.src = "https://vercel.live/_vercel/insights/script.js";
+        s.defer = true;
+        document.body.appendChild(s);
+      })();
       // Toggle mobile menu
       function toggleMenu() {
         document.getElementById("navLinks").classList.toggle("active");
