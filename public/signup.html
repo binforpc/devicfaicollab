@@ -1,0 +1,594 @@
+<!-- public/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sign Up — ICFAICOLLAB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* RESET & VARIABLES */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #ff4081;
+        --gradient: linear-gradient(45deg, #1976d2, #86b582);
+        --light-color: #333;
+        --transition-speed: 0.3s;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(45deg, #d0d6db, #c9f1c6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      /* OUTER BOX */
+      .signup-wrapper {
+        display: flex;
+        width: 90%;
+        max-width: 900px;
+        background: var(--gradient);
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        box-shadow: 10px 8px 16px rgba(0, 0, 0, 0.15);
+      }
+      /* LEFT PANEL: FORM */
+      .signup-left {
+        flex: 1;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        /* allow internal scrolling if content tall */
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 2rem;
+      }
+      .signup-left h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        font-weight: 600;
+        margin: 0.5rem 0 0.2rem;
+        color: #444;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="file"],
+      textarea {
+        padding: 0.8rem;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        transition: border-color var(--transition-speed);
+      }
+      input:focus,
+      textarea:focus {
+        border-color: var(--secondary-color);
+        outline: none;
+      }
+      input[type="submit"] {
+        border: none;
+        background: var(--gradient);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.8rem;
+        margin-top: 0.5rem;
+        transition: transform var(--transition-speed);
+      }
+      input[type="submit"]:hover {
+        transform: translateY(-2px);
+      }
+      .google-btn {
+        width: 100%;
+        background: #fff;
+        color: #444;
+        border: 1px solid #ccc;
+        padding: 0.8rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background var(--transition-speed);
+      }
+      .google-btn img {
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+      }
+      .google-btn:hover {
+        background: #f5f5f5;
+      }
+      .separator-text {
+        text-align: center;
+        margin: 1rem 0;
+        color: #666;
+        font-weight: 500;
+      }
+
+      /* Username & domain chips */
+      .username-status {
+        font-size: 0.85rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+      }
+      .username-status.available {
+        color: green;
+      }
+      .username-status.taken {
+        color: red;
+      }
+      .domains-section {
+        border: 1px solid #000;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fff;
+      }
+      .domains-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .domains-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+      .domain-chip {
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: transform var(--transition-speed);
+      }
+      .domain-chip.selected {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+      }
+
+      /* STEP 2 is hidden initially */
+      #step2 {
+        display: none;
+      }
+
+      /* RIGHT PANEL: PROMO */
+      .signup-right {
+        flex: 1;
+        background: var(--gradient);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+      .signup-right h3 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      .signup-right p {
+        font-size: 1rem;
+        max-width: 300px;
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      /* Modal Alert Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        border: 2px solid transparent;
+        background-image:
+          linear-gradient(45deg, #ebe2e1, #d87d76),
+          linear-gradient(#fff, #fff);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+      .modal-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1rem;
+      }
+      .modal-icon.error {
+        animation: shake 0.6s ease;
+      }
+      @keyframes shake {
+        0%   { transform: translateX(0); }
+        25%  { transform: translateX(-5px); }
+        50%  { transform: translateX(5px); }
+        75%  { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+      }
+      .modal-message {
+        font-size: 1.2rem;
+        color: var(--light-color);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .signup-wrapper {
+          flex-direction: column;
+        }
+        .signup-right {
+          order: -1;
+        }
+      }
+      @media (max-width: 480px) {
+        .signup-left,
+        .signup-right {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="signup-wrapper">
+      <div class="signup-left">
+        <!-- STEP 1 -->
+        <div id="step1">
+          <h2>Create your account</h2>
+          <form id="step1Form">
+            <label for="step1Name">Name</label>
+            <input type="text" id="step1Name" name="name" required />
+
+            <label for="step1Email">Email</label>
+            <input type="email" id="step1Email" name="email" required />
+
+            <label for="step1Password">Password</label>
+            <input
+              type="password"
+              id="step1Password"
+              name="password"
+              required
+            />
+
+            <input type="submit" value="Next" />
+          </form>
+
+          <p class="separator-text">or</p>
+
+          <button id="googleSignIn" class="google-btn">
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google logo"
+            />
+            Sign up with Google
+          </button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step2">
+          <h2>Complete Your Profile</h2>
+          <form id="step2Form" enctype="multipart/form-data">
+            <input type="hidden" id="finalName" name="name" />
+            <input type="hidden" id="finalEmail" name="email" />
+            <input type="hidden" id="finalPassword" name="password" />
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+            <div id="usernameStatus" class="username-status"></div>
+
+            <div class="domains-section">
+              <div class="domains-header">
+                <span class="domains-title">Select Domains</span>
+                <input
+                  type="text"
+                  id="domainSearch"
+                  placeholder="Search…"
+                  class="search-input"
+                />
+              </div>
+              <div class="domains-container" id="domainsContainer">
+                <div class="domain-chip" data-value="Backend">Backend</div>
+                <div class="domain-chip" data-value="Mobile Dev">Mobile Dev</div>
+              <div class="domain-chip" data-value="Frontend Developer">Frontend Developer</div>
+              <div class="domain-chip" data-value="DevOps">DevOps</div>
+              <div class="domain-chip" data-value="Cloud Engineering">Cloud Engineering</div>
+              <div class="domain-chip" data-value="AI">AI</div>
+              <div class="domain-chip" data-value="Machine Learning">Machine Learning</div>
+              <div class="domain-chip" data-value="Data Science">Data Science</div>
+              <div class="domain-chip" data-value="Cybersecurity">Cybersecurity</div>
+              <div class="domain-chip" data-value="Blockchain">Blockchain</div>
+              <div class="domain-chip" data-value="IoT">IoT</div>
+              <div class="domain-chip" data-value="AR/VR">AR/VR</div>
+              <div class="domain-chip" data-value="Game Development">Game Development</div>
+              <div class="domain-chip" data-value="Database Admin">Database Admin</div>
+              <div class="domain-chip" data-value="Robotics">Robotics</div>
+              <div class="domain-chip" data-value="UI/UX">UI/UX</div>
+              <div class="domain-chip" data-value="Software Testing">Software Testing</div>
+              <div class="domain-chip" data-value="Embedded Systems">Embedded Systems</div>
+              <div class="domain-chip" data-value="Desktop Apps">Desktop Apps</div>
+              <div class="domain-chip" data-value="Data Engineering">Data Engineering</div>
+              <div class="domain-chip" data-value="Network Engineering">Network Engineering</div>
+              <div class="domain-chip" data-value="System Architecture">System Architecture</div>
+              <div class="domain-chip" data-value="E-commerce">E-commerce</div>
+              <div class="domain-chip" data-value="Big Data">Big Data</div>
+              <div class="domain-chip" data-value="Quantum Computing">Quantum Computing</div>
+              <div class="domain-chip" data-value="Computer Vision">Computer Vision</div>
+              <div class="domain-chip" data-value="NLP">NLP</div>
+              <div class="domain-chip" data-value="Full Stack">Full Stack</div>
+              <div class="domain-chip" data-value="SRE">SRE</div>
+              <div class="domain-chip" data-value="Tech Support">Tech Support</div>
+
+              <!-- 10 Generic domains -->
+              <div class="domain-chip" data-value="Music">Music</div>
+              <div class="domain-chip" data-value="Art">Art</div>
+              <div class="domain-chip" data-value="Photography">Photography</div>
+              <div class="domain-chip" data-value="Cooking">Cooking</div>
+              <div class="domain-chip" data-value="Writing">Writing</div>
+              <div class="domain-chip" data-value="Graphic Design">Graphic Design</div>
+              <div class="domain-chip" data-value="Video Editing">Video Editing</div>
+              <div class="domain-chip" data-value="Marketing">Marketing</div>
+              <div class="domain-chip" data-value="Business">Business</div>
+              <div class="domain-chip" data-value="Finance">Finance</div> 
+                <!-- …etc… -->
+              </div>
+            </div>
+            <input type="hidden" id="domains" name="domains" />
+
+            <label for="skills">Skills (comma separated)</label>
+            <input
+              type="text"
+              id="skills"
+              name="skills"
+              placeholder="e.g. JavaScript, Python, CSS"
+            />
+
+            <label for="bio">Short Bio</label>
+            <textarea
+              id="bio"
+              name="bio"
+              placeholder="Tell us something about yourself"
+            ></textarea>
+
+            <label for="profilePic">Profile Picture</label>
+            <input
+              type="file"
+              id="profilePic"
+              name="profilePic"
+              accept="image/*"
+            />
+
+            <input type="submit" value="Create Account" />
+          </form>
+        </div>
+      </div>
+      <div class="signup-right">
+        <h3>Welcome to ICFAICOLLAB!</h3>
+        <p>
+          Join us to collaborate on amazing projects, build your portfolio,
+          and connect with others in your domain.
+        </p>
+      </div>
+    </div>
+
+    <!-- Modal Alert Container -->
+    <div id="modal-alert" class="modal-overlay">
+      <div class="modal-content"></div>
+    </div>
+
+    <script>
+      // Utility: show error/success in the modal
+      function showModalAlert(msg, isError = false) {
+        const ov = document.getElementById("modal-alert");
+        const c = ov.querySelector(".modal-content");
+        c.className = "modal-content" + (isError ? " modal-error" : "");
+        c.innerHTML =
+          (isError
+            ? `<svg class="modal-icon error" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#f44336" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                </svg>`
+            : `<svg class="modal-icon" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M8 12.5l3 3 5-5"/>
+                </svg>`) +
+          `<div class="modal-message">${msg}</div>`;
+        ov.classList.add("show");
+        setTimeout(() => ov.classList.remove("show"), 3000);
+      }
+
+      // STEP HANDLING
+      const step1 = document.getElementById("step1");
+      const step2 = document.getElementById("step2");
+      const isGoogleFlow =
+        new URLSearchParams(window.location.search).get("google") === "true";
+
+      if (isGoogleFlow) {
+        step1.style.display = "none";
+        step2.style.display = "block";
+        fetch("/api/users/me", { credentials: "include" })
+          .then((r) => r.json())
+          .then((j) => {
+            document.getElementById("finalName").value = j.data.name;
+            document.getElementById("finalEmail").value = j.data.email;
+          });
+      }
+
+      // STEP1 → STEP2 for local signup, with email‐check
+      document
+        .getElementById("step1Form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = e.target.name.value;
+          const email = e.target.email.value;
+          const pw = e.target.password.value;
+
+          // New: check email existence
+          try {
+            const resp = await fetch(
+              `/api/users/check-email?email=${encodeURIComponent(email)}`
+            );
+            const { available, message } = await resp.json();
+            if (!available) {
+              showModalAlert(message || "Email is already registered", true);
+              return;
+            }
+          } catch (err) {
+            showModalAlert("Error checking email: " + err.message, true);
+            return;
+          }
+
+          step1.style.display = "none";
+          step2.style.display = "block";
+          document.getElementById("finalName").value = name;
+          document.getElementById("finalEmail").value = email;
+          document.getElementById("finalPassword").value = pw;
+        });
+
+      // GOOGLE button
+      document
+        .getElementById("googleSignIn")
+        .addEventListener("click", () => {
+          window.location.href = "/api/auth/google";
+        });
+
+      // Domain chips and search...
+      const domainChips = document.querySelectorAll(".domain-chip");
+      const domainsInput = document.getElementById("domains");
+      domainChips.forEach((c) =>
+        c.addEventListener("click", () => {
+          c.classList.toggle("selected");
+          domainsInput.value = Array.from(domainChips)
+            .filter((d) => d.classList.contains("selected"))
+            .map((d) => d.dataset.value)
+            .join(", ");
+        })
+      );
+      document
+        .getElementById("domainSearch")
+        .addEventListener("input", (e) => {
+          const q = e.target.value.toLowerCase();
+          domainChips.forEach((c) => {
+            c.style.display = c.dataset.value
+              .toLowerCase()
+              .includes(q)
+              ? "inline-flex"
+              : "none";
+          });
+        });
+
+      // USERNAME debounce...
+      let tu;
+      const ui = document.getElementById("username"),
+        us = document.getElementById("usernameStatus");
+      ui.addEventListener("input", () => {
+        clearTimeout(tu);
+        const v = ui.value.trim();
+        if (v.length < 3) {
+          us.textContent = "Min 3 chars";
+          us.className = "username-status taken";
+          return;
+        }
+        tu = setTimeout(async () => {
+          try {
+            const r = await fetch(
+              `/api/users/check-username?username=${encodeURIComponent(v)}`
+            );
+            const { available } = await r.json();
+            us.textContent = available ? "✓ available" : "✕ taken";
+            us.className = "username-status " + (available ? "available" : "taken");
+          } catch {
+            us.textContent = "Error";
+            us.className = "username-status taken";
+          }
+        }, 500);
+      });
+
+      // STEP2 submission
+      document
+        .getElementById("step2Form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          try {
+            let res, data;
+            if (isGoogleFlow) {
+              res = await fetch("/api/users/update", {
+                method: "PUT",
+                credentials: "include",
+                body: fd,
+              });
+            } else {
+              res = await fetch("/api/users/signup", {
+                method: "POST",
+                credentials: "include",
+                body: fd,
+              });
+            }
+            data = await res.json();
+            if (data.success) {
+              const msg = isGoogleFlow
+                ? "Profile completed!"
+                : "Account created!";
+              showModalAlert(msg);
+              setTimeout(
+                () => (window.location.href = isGoogleFlow ? "/me" : "/login"),
+                2000
+              );
+            } else {
+              throw new Error(data.error || data.message);
+            }
+          } catch (err) {
+            showModalAlert(err.message, true);
+          }
+        });
+    </script>
+  </body>
+</html>

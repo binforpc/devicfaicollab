@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Showcase - Project Details</title>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #ff4081;
+        --background-color: #a2b379;
+        --light-color: #333333;
+        --card-bg: #ffffff;
+        --transition-speed: 0.3s;
+        --gradient: linear-gradient(45deg, #1976d2, #86b582);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(30deg, #ffffff, #92ff7952);
+        color: var(--light-color);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      /* Navbar */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .menu-toggle .hamburger {
+        width: 25px;
+        height: 2px;
+        background-color: var(--light-color);
+        position: relative;
+        transition: all 0.3s ease;
+        display: block;
+      }
+
+      .menu-toggle .hamburger::before,
+      .menu-toggle .hamburger::after {
+        content: "";
+        width: 25px;
+        height: 2px;
+        background-color: var(--light-color);
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+
+      .menu-toggle .hamburger::before {
+        top: -8px;
+      }
+
+      .menu-toggle .hamburger::after {
+        top: 8px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .nav-link {
+        color: var(--light-color);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient);
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::before {
+        width: 100%;
+      }
+
+      .user-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      /* Hide user profile by default */
+      .user-profile {
+        display: none;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .user-profile:hover {
+        transform: translateY(-2px);
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--gradient);
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .user-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .default-avatar {
+        width: 100%;
+        height: 100%;
+        padding: 8px;
+        fill: var(--light-color);
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: var(--light-color);
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+        .nav-links {
+          position: absolute;
+          top: 70px;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.95);
+          flex-direction: column;
+          gap: 1rem;
+          padding: 1rem;
+          transform: translateY(-200%);
+          transition: transform 0.3s ease;
+        }
+        .nav-links.active {
+          transform: translateY(0);
+        }
+      }
+
+      /* Project Details Section */
+      .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: var(--gradient);
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+      }
+
+      .back-button svg {
+        display: inline-block;
+      }
+
+      .back-button:hover {
+        transform: translateY(-2px);
+      }
+
+      .project-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+      }
+
+      /* Gallery styles similar to Amazon product view */
+      .project-gallery {
+        flex: 1;
+        min-width: 300px;
+        max-width: 600px;
+      }
+
+      .main-image {
+        width: 90%;
+        height: 380px;
+        object-fit: cover;
+        border-radius: 30px;
+        background: #f5f5f5;
+      }
+
+      .thumbnails {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        overflow-x: auto;
+      }
+
+      .thumbnail {
+        flex: none;
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: border 0.3s ease;
+      }
+
+      .thumbnail.selected,
+      .thumbnail:hover {
+        border: 2px solid var(--primary-color);
+      }
+
+      .details-content {
+        flex: 1;
+        min-width: 300px;
+        max-width: 600px;
+      }
+
+      /* Updated Domain and Like Section styling */
+      .domain-like-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .domain-box,
+      .like-box {
+        flex: 1;
+        background: linear-gradient(135deg, rgba(25, 118, 210, 0.2), rgba(134, 181, 130, 0.1));
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .domain-box h3,
+      .like-box h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+      .project-domain {
+        display: inline-block;
+        padding: 4px 12px;
+        background: linear-gradient(135deg, rgba(25, 118, 210, 0.1), rgba(134, 181, 130, 0.1));
+        border-radius: 8px;
+        border: 1px solid rgba(25, 118, 210, 0.3);
+        font-size: 0.9em;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+      .like-counter {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: rgba(25, 118, 210, 0.8);
+      }
+
+      .info-box {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        margin-top: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+        background: linear-gradient(135deg, rgba(25, 118, 210, 0.2), rgba(134, 181, 130, 0.1));
+      }
+
+      .info-box:hover {
+        transform: translateY(-3px);
+      }
+
+      .info-box h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--secondary-color);
+      }
+
+      .project-links {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .project-links a {
+        color: var(--primary-color);
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: rgba(25, 118, 210, 0.05);
+        transition: background 0.3s ease;
+      }
+
+      .project-links a:hover {
+        background: rgba(25, 118, 210, 0.1);
+      }
+
+      .team-members a {
+        color: var(--primary-color);
+        text-decoration: underline;
+        cursor: pointer;
+        margin-right: 0.5rem;
+      }
+
+      .creator-info {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        font-size: 0.95em;
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .project-content {
+          flex-direction: column;
+        }
+        .main-image {
+          height: 300px;
+        }
+        .thumbnail {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .main-image {
+          height: 250px;
+        }
+        .thumbnail {
+          width: 50px;
+          height: 50px;
+        }
+      }
+
+      /* Modal Alert Styles (matching signup and login) */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        position: relative;
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        border: 2px solid transparent;
+        background-image: linear-gradient(to right, #dfe0e2, #bde7b9),
+          linear-gradient(#fff, #fff);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+      .modal-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1rem;
+        animation: iconBounce 0.6s ease;
+      }
+      @keyframes iconBounce {
+        0% { transform: scale(0); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+      .modal-message {
+        font-size: 1.2rem;
+        color: var(--light-color);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+        <span class="hamburger"></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/upload" class="nav-link">Add Project</a>
+        <a href="/view-ads" class="nav-link">Team Ads</a>
+        <a href="/ads" class="nav-link">Publish Announcements</a>
+      </div>
+      <div class="user-section">
+        <div id="user-profile" class="user-profile">
+          <div class="user-avatar">
+            <img id="user-avatar-img" alt="User Avatar" loading="lazy" />
+            <svg id="default-avatar" class="default-avatar" viewBox="0 0 24 24" style="display: none">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+              />
+            </svg>
+          </div>
+          <div class="user-name" id="user-name"></div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Project Details Section -->
+    <div class="container">
+      <a href="/projects" class="back-button">
+        <svg style="width:20px;height:20px" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" />
+        </svg>
+        Back to Projects
+      </a>
+
+      <div class="project-content">
+        <div class="project-gallery">
+          <img id="mainImage" class="main-image" loading="lazy" alt="Main Project Image" />
+          <div class="thumbnails" id="thumbnails"></div>
+        </div>
+
+        <div class="details-content" id="projectDetails">
+          <!-- Project details will be loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Alert Container -->
+    <div id="modal-alert" class="modal-overlay">
+      <div class="modal-content"></div>
+    </div>
+
+    <script>
+      // Helper function: Safely return the hostname for a link.
+      function getHostname(link) {
+        try {
+          return new URL(link).hostname;
+        } catch (e) {
+          try {
+            return new URL("http://" + link).hostname;
+          } catch (e2) {
+            return link;
+          }
+        }
+      }
+
+      function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("active");
+      }
+
+      document.getElementById("user-profile").addEventListener("click", () => {
+        window.location.href = "/me";
+      });
+
+      async function loadUserProfile() {
+        try {
+          const response = await fetch("/api/users/me", { credentials: "include" });
+          const data = await response.json();
+          if (data.success) {
+            const user = data.data;
+            document.getElementById("user-profile").style.display = "flex";
+            const avatarImg = document.getElementById("user-avatar-img");
+            const defaultAvatar = document.getElementById("default-avatar");
+            avatarImg.src = user.avatar || "";
+            avatarImg.style.display = user.avatar ? "block" : "none";
+            defaultAvatar.style.display = user.avatar ? "none" : "block";
+            document.getElementById("user-name").textContent = user.name;
+          }
+        } catch (error) {
+          console.log("User not authenticated");
+        }
+      }
+
+      function showModalAlert(message, isError = false) {
+        const modalOverlay = document.getElementById("modal-alert");
+        const modalContent = modalOverlay.querySelector(".modal-content");
+        let iconHtml = "";
+        if (isError) {
+          iconHtml = `
+            <svg class="modal-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>`;
+        } else {
+          iconHtml = `
+            <svg class="modal-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 12.5l3 3 5-5"/>
+            </svg>`;
+        }
+        modalContent.innerHTML = iconHtml + `<div class="modal-message">${message}</div>`;
+        modalOverlay.classList.add("show");
+        setTimeout(() => {
+          modalOverlay.classList.remove("show");
+        }, 3000);
+      }
+
+      // Load project details including multiple photos if available
+      async function fetchProjectDetails() {
+        const projectId = window.location.pathname.split("/").pop();
+        try {
+          const response = await fetch(`/api/projects/${projectId}`);
+          const result = await response.json();
+          if (result.success) {
+            const project = result.data;
+            const mainImage = document.getElementById("mainImage");
+            const thumbnails = document.getElementById("thumbnails");
+            const projectDetails = document.getElementById("projectDetails");
+
+            // If multiple photos are available, use photoUrls array
+            let images = [];
+            if (project.photoUrls && project.photoUrls.length > 0) {
+              images = project.photoUrls;
+            } else if (project.fileUrl && /\.(png|jpg|jpeg|gif)$/i.test(project.fileUrl)) {
+              images = [project.fileUrl];
+            }
+            
+            // If images exist, display the first as main and create thumbnails for each.
+            if (images.length > 0) {
+              mainImage.src = images[0];
+              thumbnails.innerHTML = "";
+              images.forEach((url, index) => {
+                const img = document.createElement("img");
+                img.src = url;
+                img.className = "thumbnail" + (index === 0 ? " selected" : "");
+                img.alt = "Thumbnail " + (index + 1);
+                img.addEventListener("click", () => {
+                  mainImage.src = url;
+                  document.querySelectorAll(".thumbnail").forEach(th => th.classList.remove("selected"));
+                  img.classList.add("selected");
+                });
+                thumbnails.appendChild(img);
+              });
+            } else {
+              mainImage.parentElement.style.display = "none";
+            }
+
+            // Build team members HTML; default to "Solo Project" if none provided.
+            let teamMembersHtml = "Solo Project";
+            if (project.teamMembers && project.teamMembers.length > 0) {
+              teamMembersHtml = project.teamMembers
+                .map(memberUsername => `<a href="/users/${memberUsername}">${memberUsername}</a>`)
+                .join(", ");
+            }
+
+            projectDetails.innerHTML = `
+              <div class="domain-like-container">
+                <div class="domain-box">
+                  <h3>Domain</h3>
+                  <div class="project-domain">${project.domain}</div>
+                </div>
+                <div class="like-box">
+                  <h3>Likes</h3>
+                  <div class="like-counter">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>${project.likes || 0}</span>
+                  </div>
+                </div>
+              </div>
+              <h2>${project.title}</h2>
+              <p>${project.description}</p>
+              <div class="info-box">
+                <h3>Project Links</h3>
+                <div class="project-links">
+                  ${
+                    project.projectLinks && project.projectLinks.length > 0 
+                      ? project.projectLinks.map(link => `
+                          <a href="${link.startsWith('http') ? link : 'http://' + link}" target="_blank" rel="noopener">
+                            ${getHostname(link)}
+                          </a>
+                        `).join("")
+                      : '<p style="color:#666">No links provided</p>'
+                  }
+                </div>
+              </div>
+              <div class="info-box">
+                <h3>Team Members</h3>
+                <div class="team-members">
+                  ${teamMembersHtml}
+                </div>
+              </div>
+              <div class="creator-info">
+                Created by: ${project.userId && project.userId.name && project.userId.username ? 
+                  `${project.userId.name} (<a href="/users/${project.userId.username}" style="color: var(--primary-color); text-decoration: underline;">@${project.userId.username}</a>)` 
+                  : "Unknown Creator"}
+              </div>
+            `;
+          }
+        } catch (error) {
+          console.error("Error loading project:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUserProfile();
+        fetchProjectDetails();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!-- public/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login — ICFAICOLLAB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* RESET & VARIABLES */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --gradient: linear-gradient(45deg, #1976d2, #86b582);
+        --secondary-color: #ff4081;
+        --light-color: #333;
+        --transition-speed: 0.3s;
+        --primary-color: #1976d2;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(45deg, #d0d6db, #c9f1c6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 2rem;
+      }
+      .login-wrapper {
+        display: flex;
+        width: 90%;
+        max-width: 900px;
+        background: var(--gradient);
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        box-shadow: 10px 8px 16px rgba(0, 0, 0, 0.15);
+      }
+      .login-left {
+        flex: 1;
+        background: #fff;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .login-left h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      .google-btn {
+        width: 100%;
+        background: #fff;
+        color: #444;
+        border: 1px solid #ccc;
+        padding: 0.8rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background var(--transition-speed);
+      }
+      .google-btn img {
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+      }
+      .google-btn:hover {
+        background: #f5f5f5;
+      }
+      .separator-text {
+        text-align: center;
+        margin: 1rem 0;
+        color: #666;
+        font-weight: 500;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      form label {
+        font-weight: 600;
+        margin: 0.5rem 0 0.2rem;
+        color: #444;
+      }
+      form input {
+        padding: 0.8rem;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        transition: border-color var(--transition-speed);
+      }
+      form input:focus {
+        border-color: var(--secondary-color);
+        outline: none;
+      }
+      form input[type="submit"] {
+        border: none;
+        background: var(--gradient);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: transform var(--transition-speed);
+      }
+      form input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(255, 94, 98, 0.2);
+      }
+      .login-right {
+        flex: 1;
+        background: var(--gradient);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+      .login-right h3 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      .login-right p {
+        font-size: 1rem;
+        max-width: 300px;
+        text-align: center;
+        line-height: 1.4;
+      }
+      /* Modal Alert */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        border: 2px solid transparent;
+        background-image:
+          linear-gradient(45deg, #ebe2e1, #d87d76),
+          linear-gradient(#fff, #fff);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+      .modal-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1rem;
+      }
+      .modal-icon.error {
+        animation: shake 0.6s ease;
+      }
+      @keyframes shake {
+        0%   { transform: translateX(0); }
+        25%  { transform: translateX(-5px); }
+        50%  { transform: translateX(5px); }
+        75%  { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+      }
+      .modal-message {
+        font-size: 1.2rem;
+        color: var(--light-color);
+      }
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .login-wrapper {
+          flex-direction: column;
+        }
+        .login-right {
+          order: -1;
+        }
+      }
+      @media (max-width: 480px) {
+        body {
+          padding: 1rem;
+        }
+        .login-left,
+        .login-right {
+          padding: 1.5rem;
+        }
+        .login-left h2 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-left">
+        <h2>Login</h2>
+
+        <button id="googleSignIn" class="google-btn">
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google logo"
+          />
+          Sign in with Google
+        </button>
+
+        <p class="separator-text">or</p>
+
+        <form id="loginForm">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+
+          <input type="submit" value="Login" />
+        </form>
+      </div>
+      <div class="login-right">
+        <h3>Welcome Back!</h3>
+        <p>
+          We’re excited to see you again! Log in to continue exploring and
+          showcasing your projects.
+        </p>
+      </div>
+    </div>
+
+    <div id="modal-alert" class="modal-overlay">
+      <div class="modal-content"></div>
+    </div>
+
+    <script>
+      // Modal Alert
+      function showModalAlert(message, isError = false) {
+        const overlay = document.getElementById('modal-alert');
+        const content = overlay.querySelector('.modal-content');
+        let icon = '';
+        if (isError) {
+          icon = `
+            <svg class="modal-icon error" width="72" height="72" viewBox="0 0 24 24"
+              fill="none" stroke="#f44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>`;
+          content.classList.add('modal-error');
+        } else {
+          icon = `
+            <svg class="modal-icon" width="72" height="72" viewBox="0 0 24 24"
+              fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 12.5l3 3 5-5"/>
+            </svg>`;
+          content.classList.remove('modal-error');
+        }
+        content.innerHTML = icon + `<div class="modal-message">${message}</div>`;
+        overlay.classList.add('show');
+        setTimeout(() => overlay.classList.remove('show'), 3000);
+      }
+
+      // Login form
+      document.getElementById('loginForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const data = {
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
+        };
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            credentials: 'include',
+            body: JSON.stringify(data)
+          });
+          const j = await res.json();
+          if (j.success) {
+            showModalAlert('Logged in successfully');
+            setTimeout(() => window.location.href = '/me', 3000);
+          } else {
+            showModalAlert('Login failed: ' + (j.error||j.message||'Unknown'), true);
+          }
+        } catch (err) {
+          showModalAlert('Error: ' + err.message, true);
+        }
+      });
+
+      // Google sign‑in
+      document.getElementById('googleSignIn').addEventListener('click', () => {
+        window.location.href = '/api/auth/google';
+      });
+      window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const err = params.get('error');
+        if (err) {
+          showModalAlert(decodeURIComponent(err), true);
+        }
+      });
+    </script>
+  </body>
+</html>

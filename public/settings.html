@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Settings - Project Showcase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* ------------------------------ 
+         BASIC RESET & VARIABLES
+      ------------------------------ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #ff4081;
+        --text-color: #333;
+        --bg-color: #fff;
+        --card-bg: #ffffff;
+        --gradient: linear-gradient(45deg, #1976d2, #86b582);
+        --transition-speed: 0.3s;
+        --modal-border-gradient: linear-gradient(to right, #dfe0e2, #bde7b9), linear-gradient(#fff, #fff);
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f5f5;
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ------------------------------
+         ENHANCED NAVBAR
+      ------------------------------ */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.3s ease;
+      }
+      .menu-toggle:hover {
+        transform: scale(1.1);
+      }
+      .menu-toggle .hamburger {
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-color);
+        position: relative;
+        transition: all 0.3s ease;
+        display: block;
+      }
+      .menu-toggle .hamburger::before,
+      .menu-toggle .hamburger::after {
+        content: "";
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-color);
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+      .menu-toggle .hamburger::before {
+        top: -8px;
+      }
+      .menu-toggle .hamburger::after {
+        top: 8px;
+      }
+      .menu-toggle.active .hamburger {
+        background: transparent;
+      }
+      .menu-toggle.active .hamburger::before {
+        transform: rotate(45deg);
+        top: 0;
+      }
+      .menu-toggle.active .hamburger::after {
+        transform: rotate(-45deg);
+        top: 0;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+      }
+      .nav-link {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-weight: 500;
+      }
+      .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient);
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::before {
+        width: 100%;
+      }
+      .nav-link.active {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+      .user-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .logout-btn {
+        background: transparent;
+        color: var(--secondary-color);
+        border: 1px solid var(--secondary-color);
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .logout-btn:hover {
+        background: var(--secondary-color);
+        color: var(--bg-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 64, 129, 0.2);
+      }
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+        .nav-links {
+          position: absolute;
+          top: 70px;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.98);
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 1rem;
+          transform: translateY(-150%);
+          box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+          border-radius: 0 0 15px 15px;
+        }
+        .nav-links.active {
+          transform: translateY(0);
+        }
+      }
+
+      /* ------------------------------
+         ENHANCED COVER BANNER
+      ------------------------------ */
+      .cover-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+          url("https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99")
+            center/cover no-repeat;
+        border-radius: 0 0 15px 15px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 1s ease;
+      }
+      .cover-text {
+        text-align: center;
+        color: #fff;
+        padding: 1rem;
+        animation: slideUp 0.8s ease;
+      }
+      .cover-text h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        margin-bottom: 0.5rem;
+      }
+      .cover-text p {
+        font-size: 1.2rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        opacity: 0.9;
+      }
+
+      /* ------------------------------
+         ENHANCED SETTINGS CONTENT
+      ------------------------------ */
+      .settings-container {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+        animation: fadeIn 0.8s ease;
+      }
+      .settings-section {
+        margin-bottom: 2.5rem;
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        transition: box-shadow 0.3s ease;
+      }
+      .settings-section:hover {
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      }
+      .settings-section h2 {
+        margin-bottom: 1.5rem;
+        font-size: 1.6rem;
+        position: relative;
+        padding-bottom: 0.8rem;
+      }
+      .settings-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: var(--gradient);
+        border-radius: 3px;
+        transition: width 0.4s ease;
+      }
+      .settings-section:hover h2::after {
+        width: 100px;
+      }
+
+      /* Enhanced Form Styles */
+      .settings-form label {
+        display: block;
+        margin: 1.5rem 0 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        position: relative;
+        padding-left: 1rem;
+      }
+      .settings-form label::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: var(--gradient);
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .settings-form input:focus ~ label::before,
+      .settings-form textarea:focus ~ label::before {
+        opacity: 1;
+      }
+      .settings-form input,
+      .settings-form textarea {
+        width: 100%;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-left: 4px solid var(--primary-color);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: border 0.3s ease;
+        font-family: inherit;
+      }
+      .settings-form input:focus,
+      .settings-form textarea:focus {
+        outline: none;
+        border: 2px solid var(--primary-color);
+      }
+      .settings-form input:hover,
+      .settings-form textarea:hover {
+        border-color: var(--primary-color);
+      }
+      .settings-form textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      /* Enhanced Button */
+      .settings-form button {
+        background: var(--gradient);
+        border: none;
+        color: #fff;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        background-size: 200% auto;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(25, 118, 210, 0.2);
+      }
+      .settings-form button:hover {
+        background-position: right center;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+      }
+      .settings-form button:active {
+        transform: translateY(-1px);
+      }
+      .settings-form button::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.6s ease, opacity 0.3s ease;
+      }
+      .settings-form button:active::after {
+        transform: translate(-50%, -50%) scale(20);
+        opacity: 0;
+      }
+
+      /* ------------------------------
+         ITEM LIST & ACTION BUTTONS
+      ------------------------------ */
+      .item-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+      }
+      .item-card {
+        background: var(--card-bg);
+        padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        flex: 1 1 45%;
+        min-width: 250px;
+        background: linear-gradient(
+          135deg,
+          rgba(25, 118, 210, 0.15),
+          rgba(134, 181, 130, 0.3)
+        );
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+      }
+      .item-card:hover {
+        transform: translateY(-5px);
+      }
+      .item-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(25, 118, 210, 0.1),
+          transparent
+        );
+        transition: left 0.7s ease;
+      }
+      .item-card:hover::before {
+        left: 100%;
+      }
+      .item-card h4 {
+        margin-bottom: 0.8rem;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+      }
+      .item-card p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Delete button */
+      .delete-btn {
+        background: linear-gradient(
+          135deg,
+          rgba(25, 118, 210, 0.6),
+          rgba(134, 181, 130, 1)
+        );
+        border: none;
+        color: #fff;
+        padding: 0.4rem 0.8rem;
+        border-radius: 5px;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(244, 67, 54, 0.2);
+        z-index: 2;
+      }
+      .delete-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+      }
+      .delete-btn:active {
+        transform: scale(0.95);
+      }
+
+      /* Edit button (same style, left side) */
+      .edit-btn {
+        background: var(--secondary-color);
+        border: none;
+        color: #fff;
+        padding: 0.4rem 0.8rem;
+        border-radius: 5px;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        z-index: 2;
+        background-image: linear-gradient(45deg, #bebcbb, #ee1405), linear-gradient(#fff, #fff);
+      }
+      .edit-btn:hover {
+        transform: scale(1.1);
+      }
+
+      /* ------------------------------
+         FOOTER
+      ------------------------------ */
+      footer {
+        background: #fff;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        padding: 1.5rem;
+        margin-top: auto;
+      }
+      footer p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* ------------------------------
+         MODAL ALERT STYLES
+      ------------------------------ */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(5px);
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        position: relative;
+        background: #fff;
+        padding: 2rem 3rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        transform: scale(0.8);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        max-width: 90%;
+        width: 400px;
+        border: 2px solid transparent;
+        background-image: var(--modal-border-gradient);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+      .modal-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1.5rem;
+        animation: iconBounce 0.6s ease;
+      }
+      .modal-icon.error {
+        animation: iconBounce 0.6s ease, shake 0.6s ease;
+      }
+      .modal-message {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+      }
+      .modal-content.modal-error {
+        background-image: linear-gradient(45deg, #f44336, #f44336),
+          linear-gradient(#fff, #fff);
+      }
+
+      /* ------------------------------
+         ANIMATIONS
+      ------------------------------ */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes iconBounce {
+        0% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes shake {
+        0% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+      <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+        <span class="hamburger"></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/upload" class="nav-link">Add Project</a>
+        <a href="/projects" class="nav-link">View Projects</a>
+        <a href="/ads" class="nav-link">Publish Announcements</a>
+        <a href="/view-ads" class="nav-link">View Ads</a>
+        <a href="/settings" class="nav-link active">Settings</a>
+      </div>
+      <div class="user-section">
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </nav>
+
+    <!-- ========== COVER BANNER ========== -->
+    <div class="cover-container">
+      <div class="cover-text">
+        <h1>Settings</h1>
+        <p>Manage your account and content</p>
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS CONTENT ========== -->
+    <section class="settings-container">
+      <!-- Account Details -->
+      <div class="settings-section">
+        <h2>Account Details</h2>
+        <form class="settings-form" id="accountSettingsForm">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your full name" required />
+
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Your username" required />
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Your email" required />
+
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself"></textarea>
+
+          <label for="domains">Domains (comma-separated)</label>
+          <input type="text" id="domains" name="domains" placeholder="e.g., Web Development, AI" />
+
+          <label for="skills">Skills (comma-separated)</label>
+          <input type="text" id="skills" name="skills" placeholder="e.g., JavaScript, Node.js" />
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+
+      <!-- My Projects -->
+      <div class="settings-section">
+        <h2>My Projects</h2>
+        <div class="item-list" id="myProjectsList">
+          <p>Loading your projects...</p>
+        </div>
+      </div>
+
+      <!-- My Ads -->
+      <div class="settings-section">
+        <h2>My Ads</h2>
+        <div class="item-list" id="myAdsList">
+          <p>Loading your ads...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+      <p>© 2023 Project Showcase. All rights reserved.</p>
+    </footer>
+
+    <!-- ========== MODAL ALERT CONTAINER ========== -->
+    <div id="modal-alert" class="modal-overlay">
+      <div class="modal-content"></div>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+      function toggleMenu() {
+        const navLinks = document.getElementById("navLinks");
+        const menuToggle = document.querySelector(".menu-toggle");
+        navLinks.classList.toggle("active");
+        menuToggle.classList.toggle("active");
+      }
+
+      function showModalAlert(message, isError = false) {
+        const modalOverlay = document.getElementById("modal-alert");
+        const modalContent = modalOverlay.querySelector(".modal-content");
+        let iconHtml = "";
+        if (isError) {
+          iconHtml = `
+            <svg class="modal-icon error" width="72" height="72" viewBox="0 0 24 24" 
+                 fill="none" stroke="#f44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>`;
+          modalContent.classList.add("modal-error");
+        } else {
+          iconHtml = `
+            <svg class="modal-icon" width="72" height="72" viewBox="0 0 24 24" 
+                 fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 12.5l3 3 5-5"/>
+            </svg>`;
+          modalContent.classList.remove("modal-error");
+        }
+        modalContent.innerHTML = iconHtml + `<div class="modal-message">${message}</div>`;
+        modalOverlay.classList.add("show");
+        setTimeout(() => {
+          modalOverlay.classList.remove("show");
+        }, 3000);
+      }
+
+      // Redirect helper for Edit
+      function editProject(projectId) {
+        window.location.href = `/project/${projectId}/edit?id=${projectId}`;
+      }
+
+      async function fetchAccountDetails() {
+        try {
+          const response = await fetch("/api/users/me", { credentials: "include" });
+          const data = await response.json();
+          if (data.success) {
+            const user = data.data;
+            document.getElementById("name").value = user.name || "";
+            document.getElementById("username").value = user.username || "";
+            document.getElementById("email").value = user.email || "";
+            document.getElementById("bio").value = user.bio || "";
+            document.getElementById("domains").value = user.domains ? user.domains.join(", ") : "";
+            document.getElementById("skills").value = user.skills ? user.skills.join(", ") : "";
+          } else {
+            showModalAlert("Error fetching account details", true);
+          }
+        } catch (error) {
+          console.error("Error fetching account details:", error);
+        }
+      }
+
+      async function fetchMyProjects() {
+        try {
+          const response = await fetch("/api/projects/my-projects", { credentials: "include" });
+          const data = await response.json();
+          const myProjectsList = document.getElementById("myProjectsList");
+          if (data.success) {
+            if (data.data.length) {
+              myProjectsList.innerHTML = data.data
+                .map(
+                  (project) => `
+                <div class="item-card" id="project-${project._id}">
+                  <h4>${project.title || "Untitled"}</h4>
+                  <p>Domain: ${project.domain || "N/A"}</p>
+                  <button class="edit-btn" onclick="editProject('${project._id}')">Edit</button>
+                  <button class="delete-btn" onclick="deleteProject('${project._id}')">Delete</button>
+                </div>
+              `
+                )
+                .join("");
+            } else {
+              myProjectsList.innerHTML = "<p>No projects found.</p>";
+            }
+          } else {
+            myProjectsList.innerHTML = "<p>Error loading projects.</p>";
+          }
+        } catch (error) {
+          console.error("Error fetching projects:", error);
+        }
+      }
+
+      async function fetchMyAds() {
+        try {
+          const response = await fetch("/api/ads/my-ads", { credentials: "include" });
+          const data = await response.json();
+          const myAdsList = document.getElementById("myAdsList");
+          if (data.success) {
+            if (data.data.length) {
+              myAdsList.innerHTML = data.data
+                .map(
+                  (ad) => `
+                <div class="item-card" id="ad-${ad._id}">
+                  <h4>${ad.title || "Untitled"}</h4>
+                  <p>Domain: ${ad.domain || "N/A"}</p>
+                  <button class="delete-btn" onclick="deleteAd('${ad._id}')">Delete</button>
+                </div>
+              `
+                )
+                .join("");
+            } else {
+              myAdsList.innerHTML = "<p>No ads found.</p>";
+            }
+          } else {
+            myAdsList.innerHTML = "<p>Error loading ads.</p>";
+          }
+        } catch (error) {
+          console.error("Error fetching ads:", error);
+        }
+      }
+
+      async function deleteProject(projectId) {
+        try {
+          const response = await fetch(`/api/projects/${projectId}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (e) {
+            showModalAlert("Unexpected response from server: " + text, true);
+            return;
+          }
+          if (result.success) {
+            document.getElementById("project-" + projectId).remove();
+            showModalAlert("Project deleted successfully");
+          } else {
+            showModalAlert("Error deleting project: " + result.error, true);
+          }
+        } catch (error) {
+          showModalAlert("Error deleting project: " + error.message, true);
+        }
+      }
+
+      async function deleteAd(adId) {
+        try {
+          const response = await fetch(`/api/ads/${adId}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (e) {
+            showModalAlert("Unexpected response from server: " + text, true);
+            return;
+          }
+          if (result.success) {
+            document.getElementById("ad-" + adId).remove();
+            showModalAlert("Ad deleted successfully");
+          } else {
+            showModalAlert("Error deleting ad: " + result.error, true);
+          }
+        } catch (error) {
+          showModalAlert("Error deleting ad: " + error.message, true);
+        }
+      }
+
+      document.getElementById("accountSettingsForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = {
+          name: document.getElementById("name").value,
+          username: document.getElementById("username").value,
+          email: document.getElementById("email").value,
+          bio: document.getElementById("bio").value,
+          domains: document.getElementById("domains").value,
+          skills: document.getElementById("skills").value,
+        };
+        try {
+          const response = await fetch("/api/users/update", {
+            method: "PUT",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (e) {
+            showModalAlert("Unexpected response from server: " + text, true);
+            return;
+          }
+          if (result.success) {
+            showModalAlert("Account details updated successfully");
+          } else {
+            showModalAlert("Error updating account: " + result.error, true);
+          }
+        } catch (error) {
+          showModalAlert("Error: " + error.message, true);
+        }
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          const response = await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
+          const data = await response.json();
+          if (data.success) {
+            showModalAlert("Logged out successfully");
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 3000);
+          } else {
+            showModalAlert("Logout failed", true);
+          }
+        } catch (error) {
+          showModalAlert("Error during logout: " + error.message, true);
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchAccountDetails();
+        fetchMyProjects();
+        fetchMyAds();
+      });
+    </script>
+  </body>
+</html>

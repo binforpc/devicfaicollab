@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Edit Project – Project Showcase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* ------------------------------ 
+         BASIC RESET & VARIABLES
+      ------------------------------ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #ff4081;
+        --text-color: #333;
+        --bg-color: #fff;
+        --card-bg: #ffffff;
+        --gradient: linear-gradient(45deg, #1976d2, #86b582);
+        --transition-speed: 0.3s;
+        --modal-border-gradient: linear-gradient(to right, #dfe0e2, #bde7b9), linear-gradient(#fff, #fff);
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f5f5;
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ------------------------------
+         ENHANCED NAVBAR
+      ------------------------------ */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.3s ease;
+      }
+      .menu-toggle:hover {
+        transform: scale(1.1);
+      }
+      .menu-toggle .hamburger {
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-color);
+        position: relative;
+        transition: all 0.3s ease;
+        display: block;
+      }
+      .menu-toggle .hamburger::before,
+      .menu-toggle .hamburger::after {
+        content: "";
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-color);
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+      .menu-toggle .hamburger::before {
+        top: -8px;
+      }
+      .menu-toggle .hamburger::after {
+        top: 8px;
+      }
+      .menu-toggle.active .hamburger {
+        background: transparent;
+      }
+      .menu-toggle.active .hamburger::before {
+        transform: rotate(45deg);
+        top: 0;
+      }
+      .menu-toggle.active .hamburger::after {
+        transform: rotate(-45deg);
+        top: 0;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+      }
+      .nav-link {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-weight: 500;
+      }
+      .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient);
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::before {
+        width: 100%;
+      }
+      .nav-link.active {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+      .user-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .logout-btn {
+        background: transparent;
+        color: var(--secondary-color);
+        border: 1px solid var(--secondary-color);
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .logout-btn:hover {
+        background: var(--secondary-color);
+        color: var(--bg-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 64, 129, 0.2);
+      }
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+        .nav-links {
+          position: absolute;
+          top: 70px;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.98);
+          flex-direction: column;
+          gap: 0.5rem;
+          padding: 1rem;
+          transform: translateY(-150%);
+          box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+          border-radius: 0 0 15px 15px;
+        }
+        .nav-links.active {
+          transform: translateY(0);
+        }
+      }
+
+      /* ------------------------------
+         ENHANCED COVER BANNER
+      ------------------------------ */
+      .cover-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                    url("https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99") center/cover no-repeat;
+        border-radius: 0 0 15px 15px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 1s ease;
+      }
+      .cover-text {
+        text-align: center;
+        color: #fff;
+        padding: 1rem;
+        animation: slideUp 0.8s ease;
+      }
+      .cover-text h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        margin-bottom: 0.5rem;
+      }
+      .cover-text p {
+        font-size: 1.2rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        opacity: 0.9;
+      }
+
+      /* ------------------------------
+         EDIT PROJECT FORM
+      ------------------------------ */
+      .settings-container {
+        max-width: 700px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+        animation: fadeIn 0.8s ease;
+      }
+      .settings-section {
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        transition: box-shadow 0.3s ease;
+      }
+      .settings-section:hover {
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      }
+      .settings-section h2 {
+        margin-bottom: 1.5rem;
+        font-size: 1.6rem;
+        position: relative;
+        padding-bottom: 0.8rem;
+      }
+      .settings-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: var(--gradient);
+        border-radius: 3px;
+        transition: width 0.4s ease;
+      }
+      .settings-section:hover h2::after {
+        width: 100px;
+      }
+
+      .settings-form label {
+        display: block;
+        margin: 1.5rem 0 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        position: relative;
+        padding-left: 1rem;
+      }
+      .settings-form label::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: var(--gradient);
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .settings-form input:focus ~ label::before,
+      .settings-form textarea:focus ~ label::before {
+        opacity: 1;
+      }
+      .settings-form input,
+      .settings-form textarea {
+        width: 100%;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-left: 4px solid var(--primary-color);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: border 0.3s ease;
+        font-family: inherit;
+      }
+      .settings-form input:focus,
+      .settings-form textarea:focus {
+        outline: none;
+        border: 2px solid var(--primary-color);
+      }
+      .settings-form input:hover,
+      .settings-form textarea:hover {
+        border-color: var(--primary-color);
+      }
+      .settings-form textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .settings-form button {
+        background: var(--gradient);
+        border: none;
+        color: #fff;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        background-size: 200% auto;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(25, 118, 210, 0.2);
+      }
+      .settings-form button:hover {
+        background-position: right center;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+      }
+      .settings-form button:active {
+        transform: translateY(-1px);
+      }
+      .settings-form button::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.6s ease, opacity 0.3s ease;
+      }
+      .settings-form button:active::after {
+        transform: translate(-50%, -50%) scale(20);
+        opacity: 0;
+      }
+
+      /* ------------------------------
+         FOOTER
+      ------------------------------ */
+      footer {
+        background: #fff;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        padding: 1.5rem;
+        margin-top: auto;
+      }
+      footer p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* ------------------------------
+         MODAL ALERT
+      ------------------------------ */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(5px);
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        position: relative;
+        background: #fff;
+        padding: 2rem 3rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        transform: scale(0.8);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        max-width: 90%;
+        width: 400px;
+        border: 2px solid transparent;
+        background-image: var(--modal-border-gradient);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+      .modal-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1.5rem;
+        animation: iconBounce 0.6s ease;
+      }
+      .modal-icon.error {
+        animation: iconBounce 0.6s ease, shake 0.6s ease;
+      }
+      .modal-message {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+      }
+      .modal-content.modal-error {
+        background-image: linear-gradient(45deg, #ebe2e1, #d87d76), linear-gradient(#fff, #fff);
+      }
+
+      /* ------------------------------
+         ANIMATIONS
+      ------------------------------ */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes iconBounce {
+        0% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes shake {
+        0% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+        <span class="hamburger"></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/upload" class="nav-link">Add Project</a>
+        <a href="/projects" class="nav-link">View Projects</a>
+        <a href="/ads" class="nav-link">Publish Announcements</a>
+        <a href="/view-ads" class="nav-link">View Ads</a>
+        <a href="/settings" class="nav-link">Settings</a>
+        <a href="#" class="nav-link active">Edit Project</a>
+      </div>
+      <div class="user-section">
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </nav>
+
+    <!-- COVER BANNER -->
+    <div class="cover-container">
+      <div class="cover-text">
+        <h1>Edit Project</h1>
+        <p>Modify your project details below</p>
+      </div>
+    </div>
+
+    <!-- EDIT PROJECT FORM -->
+    <section class="settings-container">
+      <div class="settings-section">
+        <h2>Edit Project</h2>
+        <form class="settings-form" id="editProjectForm" enctype="multipart/form-data">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="project-title" placeholder="Project title" required />
+
+          <label for="description">Description</label>
+          <textarea id="description" name="project-description" placeholder="Project description" required></textarea>
+
+          <label for="domain">Domain</label>
+          <input type="text" id="domain" name="domain" placeholder="e.g., Web Development" required />
+
+          <label for="projectLinks">Project Links (comma-separated)</label>
+          <input type="text" id="projectLinks" name="project-links" placeholder="e.g., https://repo, https://live-demo" />
+
+          <label for="teamMembers">Team Members (comma-separated)</label>
+          <input type="text" id="teamMembers" name="team-members" placeholder="e.g., alice, bob" />
+
+          <label for="previewImage">Preview Image</label>
+          <input type="file" id="previewImage" name="previewImage" accept="image/*" />
+
+          <label for="projectImages">Additional Images</label>
+          <input type="file" id="projectImages" name="projectImages" accept="image/*" multiple />
+
+          <label for="demoVideo">Demo Video</label>
+          <input type="file" id="demoVideo" name="demo-video" accept="video/*" />
+
+          <label for="file">Main File (archive, pdf, etc.)</label>
+          <input type="file" id="file" name="file" />
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2023 Project Showcase. All rights reserved.</p>
+    </footer>
+
+    <!-- MODAL ALERT -->
+    <div id="modal-alert" class="modal-overlay">
+      <div class="modal-content"></div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+      // Toggle mobile menu
+      function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("active");
+        document.querySelector(".menu-toggle").classList.toggle("active");
+      }
+
+      // Modal alert
+      function showModalAlert(message, isError = false) {
+        const overlay = document.getElementById("modal-alert");
+        const content = overlay.querySelector(".modal-content");
+        if (isError) {
+          content.classList.add("modal-error");
+          content.innerHTML = `
+            <svg class="modal-icon error" width="72" height="72" viewBox="0 0 24 24" fill="none" 
+                 stroke="#f44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>
+            <div class="modal-message">${message}</div>`;
+        } else {
+          content.classList.remove("modal-error");
+          content.innerHTML = `
+            <svg class="modal-icon" width="72" height="72" viewBox="0 0 24 24" fill="none" 
+                 stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 12.5l3 3 5-5"/>
+            </svg>
+            <div class="modal-message">${message}</div>`;
+        }
+        overlay.classList.add("show");
+        setTimeout(() => overlay.classList.remove("show"), 3000);
+      }
+
+      // Logout
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        const res = await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include"
+        });
+        const data = await res.json();
+        if (data.success) {
+          showModalAlert("Logged out successfully");
+          setTimeout(() => window.location.href = "/", 1500);
+        } else {
+          showModalAlert("Logout failed", true);
+        }
+      });
+
+      // Extract project ID from URL
+      function getProjectId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("id");
+      }
+
+      // Load project for editing (owner-only endpoint)
+      async function loadProject() {
+        const id = getProjectId();
+        if (!id) {
+          showModalAlert("No project ID provided", true);
+          return window.location.href = "/settings";
+        }
+        const res = await fetch(`/api/projects/${id}/edit`, {
+          credentials: "include"
+        });
+        if (res.status === 403) {
+          showModalAlert("Not authorized to edit this project", true);
+          return setTimeout(() => window.location.href = "/settings", 1500);
+        }
+        const { success, data, error } = await res.json();
+        if (!success) {
+          showModalAlert("Error loading project: " + error, true);
+          return setTimeout(() => window.location.href = "/settings", 1500);
+        }
+        // Populate form
+        document.getElementById("title").value = data.title;
+        document.getElementById("description").value = data.description;
+        document.getElementById("domain").value = data.domain;
+        document.getElementById("projectLinks").value = data.projectLinks.join(", ");
+        document.getElementById("teamMembers").value = data.teamMembers.join(", ");
+        // Note: file inputs cannot be pre-filled
+      }
+
+      // Submit edits
+      document.getElementById("editProjectForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = getProjectId();
+        const form = e.target;
+        const formData = new FormData(form);
+        const res = await fetch(`/api/projects/${id}`, {
+          method: "PUT",
+          credentials: "include",
+          body: formData
+        });
+        const text = await res.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch {
+          showModalAlert("Unexpected response: " + text, true);
+          return;
+        }
+        if (result.success) {
+          showModalAlert("Project updated successfully");
+        } else {
+          showModalAlert("Update failed: " + result.error, true);
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", loadProject);
+    </script>
+  </body>
+</html>

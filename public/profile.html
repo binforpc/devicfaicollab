@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Profile - Project Showcase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* ------------------------------
+         BASIC RESET & VARIABLES
+      ------------------------------ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #ff4081;
+        --text-color: #333;
+        --bg-color: #fff;
+        --card-bg: #ffffff;
+        --gradient: linear-gradient(45deg, #1976d2, #86b582);
+        --transition-speed: 0.3s;
+        --modal-border-gradient: linear-gradient(to right, #dfe0e2, #bde7b9), linear-gradient(#fff, #fff);
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ------------------------------
+         NAVBAR
+      ------------------------------ */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+      }
+      .menu-toggle .hamburger {
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-color);
+        position: relative;
+        transition: all 0.3s ease;
+        display: block;
+      }
+      .menu-toggle .hamburger::before,
+      .menu-toggle .hamburger::after {
+        content: "";
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-color);
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+      .menu-toggle .hamburger::before {
+        top: -8px;
+      }
+      .menu-toggle .hamburger::after {
+        top: 8px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        transition: transform 0.3s ease;
+      }
+      .nav-link {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+      .nav-link::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient);
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::before {
+        width: 100%;
+      }
+      .user-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      .user-profile:hover {
+        transform: translateY(-2px);
+      }
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--gradient);
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .user-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .default-avatar {
+        width: 100%;
+        height: 100%;
+        padding: 8px;
+        fill: var(--text-color);
+      }
+      .user-name {
+        font-weight: 600;
+        color: var(--text-color);
+      }
+      #logoutBtn {
+        background: transparent;
+        color: var(--secondary-color);
+        border: 1px solid var(--secondary-color);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      #logoutBtn:hover {
+        background: var(--secondary-color);
+        color: var(--bg-color);
+      }
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: block;
+        }
+        .nav-links {
+          position: absolute;
+          top: 70px;
+          left: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 0.95);
+          flex-direction: column;
+          gap: 1rem;
+          padding: 1rem;
+          transform: translateY(-200%);
+        }
+        .nav-links.active {
+          transform: translateY(0);
+        }
+      }
+
+      /* ------------------------------
+         COVER BANNER / HEADER
+      ------------------------------ */
+      .cover-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: url("https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99")
+          center/cover no-repeat;
+        border-radius: 0 0 15px 15px;
+        overflow: hidden;
+      }
+      .cover-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #fff;
+        color: var(--text-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .cover-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #fff;
+      }
+      .cover-text h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      .cover-text p {
+        margin-top: 0.3rem;
+        font-size: 1rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+      }
+
+      /* ------------------------------
+         PROFILE SECTION BELOW COVER
+      ------------------------------ */
+      .profile-section {
+        position: relative;
+        margin: 0 auto;
+        width: 90%;
+        max-width: 1000px;
+        flex: 1;
+        padding-bottom: 200px;
+      }
+      /* Larger image with transparent border */
+      .profile-avatar {
+        position: absolute;
+        top: -60px;
+        left: 0;
+        width: 150px; /* increased size */
+        height: 150px; /* increased size */
+        border-radius: 50%;
+        overflow: hidden;
+        background: #ccc;
+        border: 5px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .profile-info {
+        margin-left: 170px; /* to accommodate the larger avatar */
+        padding-top: 1rem;
+      }
+      /* Larger user name with gradient */
+      .profile-info h2 {
+        font-size: 2.5rem; /* bigger user name */
+        margin-bottom: 0.2rem;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+      }
+      /* Bold and larger domain tags */
+      .profile-info .user-subtitle {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 0.3rem;
+      }
+      .profile-info .user-bio {
+        font-size: 0.95rem;
+        color: #444;
+        margin-bottom: 0.5rem;
+      }
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 0.5rem;
+      }
+      .skill-tag {
+        background: rgba(255, 255, 255, 0.2);
+        color: #444;
+        padding: 0.3rem 0.6rem;
+        border-radius: 20px;
+        border: 1px solid rgba(100, 93, 93, 0.6);
+        font-size: 0.8rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .skill-tag::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(130, 212, 144, 0.1);
+        z-index: -1;
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+      }
+      .skill-tag:hover {
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15),
+          0 3px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+      .profile-info .location {
+        font-size: 0.9rem;
+        color: #777;
+        margin-bottom: 1rem;
+      }
+      /* If you decide to show action-buttons in the public profile, they appear here */
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .action-btn {
+        background: var(--gradient);
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: opacity var(--transition-speed);
+      }
+      .action-btn:hover {
+        opacity: 0.9;
+      }
+
+      /* ------------------------------
+         TABS MENU & CONTENT
+      ------------------------------ */
+      .tabs-menu {
+        display: flex;
+        gap: 1.5rem;
+        border-bottom: 2px solid #ddd;
+        margin-bottom: 1rem;
+      }
+      .tabs-menu a {
+        position: relative;
+        padding: 0.5rem 0;
+        font-weight: 600;
+        color: #666;
+        cursor: pointer;
+      }
+      .tabs-menu a.active {
+        color: var(--primary-color);
+      }
+      .tabs-menu a.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--gradient);
+      }
+      .tab-content {
+        display: none;
+        margin-top: 1rem;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* ------------------------------
+         PROJECTS GRID (PUBLIC VIEW)
+      ------------------------------ */
+      .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 2rem;
+      }
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 40px;
+      }
+      .project-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        transition: all var(--transition-speed) ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(231, 194, 194, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        height: 350px;
+      }
+      .project-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15),
+          0 0 40px rgba(255, 255, 255, 0.1) inset;
+      }
+      .card-header {
+        height: 130px;
+        padding: 15px 20px 0 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent 80%);
+      }
+      .project-title {
+        font-size: 1.2em;
+        margin: 0;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+      }
+      .project-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .project-time {
+        font-size: 0.9em;
+        opacity: 0.8;
+        white-space: nowrap;
+      }
+      .project-domain {
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        border-radius: 2rem;
+        padding: 6px 12px;
+        border: 1px solid rgba(238, 146, 146, 0.452);
+        box-shadow: 10px 4px 6px rgba(0,0,0,0.1);
+        font-size: 0.9em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 50%;
+        transition: all 0.3s ease;
+      }
+      .project-media {
+        width: 100%;
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+        background: #ffffff;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding: 1rem;
+      }
+      .project-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease, filter 0.3s ease;
+        border-radius: 10px;
+      }
+      .card-actions {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        background: linear-gradient(to top, rgba(255,255,255,0.1), transparent);
+      }
+      .card-actions button {
+        background: var(--primary-color);
+        border: none;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .card-actions button:hover {
+        background: #155fa8;
+      }
+
+      /* ------------------------------
+         FOOTER
+      ------------------------------ */
+      footer {
+        background: #fff;
+        box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+        padding: 1rem;
+        margin-top: auto;
+      }
+      footer p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* ------------------------------
+         MODAL ALERT STYLES
+      ------------------------------ */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        position: relative;
+        background: #fff;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        border: 2px solid transparent;
+        background-image: var(--modal-border-gradient);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+      .modal-icon {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 1rem;
+        animation: iconBounce 0.6s ease;
+      }
+      .modal-icon.error {
+        animation: iconBounce 0.6s ease, shake 0.6s ease;
+      }
+      @keyframes iconBounce {
+        0% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+      }
+      .modal-message {
+        font-size: 1.2rem;
+        color: var(--text-color);
+      }
+      .modal-content.modal-error {
+        background-image: linear-gradient(45deg, #fffcfc, #f0b4b0), linear-gradient(#fff, #fff);
+      }
+
+      /* ------------------------------
+         RESPONSIVE STYLES
+      ------------------------------ */
+      @media (max-width: 768px) {
+        .profile-section {
+          width: 95%;
+          padding-bottom: 150px;
+        }
+        .profile-avatar {
+          position: relative;
+          top: 0;
+          margin: 0 auto;
+          width: 120px;
+          height: 120px;
+          border-width: 4px;
+        }
+        .profile-info {
+          margin-left: 0;
+          padding-top: 1rem;
+          text-align: center;
+        }
+        /* Center skill tags on mobile */
+        .skill-tags {
+          justify-content: center;
+        }
+        .projects-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+          padding: 20px;
+        }
+      }
+      @media (max-width: 480px) {
+        .cover-container {
+          height: 200px;
+        }
+        .cover-text h1 {
+          font-size: 1.5rem;
+        }
+        .cover-text p {
+          font-size: 0.9rem;
+        }
+        .profile-avatar {
+          width: 100px;
+          height: 100px;
+          border-width: 3px;
+        }
+        .profile-info h2 {
+          font-size: 2rem;
+        }
+        .profile-info .user-subtitle {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+      <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+        <span class="hamburger"></span>
+      </button>
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/upload" class="nav-link">Add Project</a>
+        <a href="/projects" class="nav-link">View Projects</a>
+        <a href="/ads" class="nav-link">Publish Announcements</a>
+        <a href="/view-ads" class="nav-link">View Ads</a>
+      </div>
+      <div class="user-section">
+        <div id="user-profile" class="user-profile" style="display: none">
+          <div class="user-avatar">
+            <img id="user-avatar-img" alt="User Avatar" />
+            <svg id="default-avatar" class="default-avatar" viewBox="0 0 24 24" style="display: none">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 
+                   10 10 10 10-4.48 10-10S17.52 2 12 
+                   2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 
+                   3-3-1.34-3-3 1.34-3 3-3zm0 
+                   14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 
+                   4-3.08 6-3.08 1.99 0 5.97 1.09 6 
+                   3.08-1.29 1.94-3.5 3.22-6 
+                   3.22z"
+              />
+            </svg>
+          </div>
+          <div class="user-name" id="user-name"></div>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </nav>
+
+    <!-- ========== COVER BANNER ========== -->
+    <div class="cover-container">
+      <div class="cover-badge" id="coverBadge">28</div>
+      <div class="cover-text">
+        <h1>ICFAICOLLAB</h1>
+        <p>Your Collaboration Platform</p>
+      </div>
+    </div>
+
+    <!-- ========== PROFILE SECTION BELOW COVER ========== -->
+    <section class="profile-section">
+      <div class="profile-avatar">
+        <img id="profilePic" alt="Profile" />
+        <i id="defaultProfileIcon" class="fas fa-user" style="display: none;"></i>
+      </div>
+      <div class="profile-info">
+        <h2 id="userNameDisplay">N/A</h2>
+        <p class="user-subtitle" id="userSubtitle">No domain info</p>
+        <p class="user-bio" id="userBio">No bio available</p>
+        <div class="skill-tags" id="skillTags">
+          <!-- Skill tags will be inserted dynamically -->
+        </div>
+        <p class="location" id="userLocation">N/A</p>
+        <!-- Action buttons (hidden by default for public profiles, can be shown if needed) -->
+        <div class="action-buttons" id="publicActionButtons" style="display:none;">
+          <button class="action-btn publish" onclick="window.location.href='/upload'">Publish Work</button>
+          <button class="action-btn education" onclick="window.location.href='/education'">Add Education</button>
+          <button class="action-btn experience" onclick="window.location.href='/experience'">Add Experience</button>
+          <button class="action-btn achievement" onclick="window.location.href='/achievement'">Add Achievement</button>
+        </div>
+
+        <!-- Tabs Menu (for public profile, typically just Projects) -->
+        <div class="tabs-menu">
+          <a id="projectsTabBtn" class="active" onclick="showTab('projectsTab')">Projects</a>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-content active" id="projectsTab">
+          <div class="container">
+            <header>
+              <h1 id="profileProjectsTitle">Projects</h1>
+              <p>View this user's projects</p>
+            </header>
+            <div class="projects-grid" id="projectsGrid">
+              <!-- Project cards loaded dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+      <p>© 2023 Project Showcase. All rights reserved.</p>
+    </footer>
+
+    <!-- ========== MODAL ALERT CONTAINER (for messages) ========== -->
+    <div id="modal-alert" class="modal-overlay">
+      <div class="modal-content"></div>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+      // Toggle mobile menu
+      function toggleMenu() {
+        document.getElementById("navLinks").classList.toggle("active");
+      }
+
+      // Tab switching (for public profile, only 'Projects' is shown by default)
+      function showTab(tabId) {
+        document.getElementById("projectsTabBtn").classList.remove("active");
+        document.getElementById("projectsTab").classList.remove("active");
+
+        document.getElementById(tabId).classList.add("active");
+        if (tabId === "projectsTab") {
+          document.getElementById("projectsTabBtn").classList.add("active");
+        }
+      }
+
+      // Modal Alert function
+      function showModalAlert(message, isError = false) {
+        const modalOverlay = document.getElementById("modal-alert");
+        const modalContent = modalOverlay.querySelector(".modal-content");
+        let iconHtml = "";
+
+        if (isError) {
+          iconHtml = `
+            <svg class="modal-icon error" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f44336" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>`;
+          modalContent.classList.add("modal-error");
+        } else {
+          iconHtml = `
+            <svg class="modal-icon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 12.5l3 3 5-5"/>
+            </svg>`;
+          modalContent.classList.remove("modal-error");
+        }
+
+        modalContent.innerHTML = iconHtml + `<div class="modal-message">${message}</div>`;
+        modalOverlay.classList.add("show");
+
+        setTimeout(() => {
+          modalOverlay.classList.remove("show");
+        }, 3000);
+      }
+
+      // Extract username from URL (e.g., /users/johndoe)
+      function getUsernameFromURL() {
+        const pathParts = window.location.pathname.split("/");
+        return pathParts[pathParts.length - 1];
+      }
+
+      // Fetch public user data by username
+      async function fetchPublicUserData() {
+        const username = getUsernameFromURL();
+        try {
+          const response = await fetch(`/api/users/${username}`);
+          const result = await response.json();
+          if (result.success) {
+            const user = result.data;
+            document.getElementById("userNameDisplay").textContent = user.name || "N/A";
+            if (user.domains && user.domains.length > 0) {
+              // Use a bolder divider if you like => " | "
+              document.getElementById("userSubtitle").textContent = user.domains.join(" | ");
+            } else {
+              document.getElementById("userSubtitle").textContent = "No domain info";
+            }
+            if (user.bio) {
+              document.getElementById("userBio").textContent = user.bio;
+            } else {
+              document.getElementById("userBio").textContent = "No bio available";
+            }
+            const skillTagsEl = document.getElementById("skillTags");
+            skillTagsEl.innerHTML = "";
+            if (user.skills && user.skills.length > 0) {
+              user.skills.forEach(skill => {
+                const span = document.createElement("span");
+                span.className = "skill-tag";
+                span.textContent = skill;
+                skillTagsEl.appendChild(span);
+              });
+            } else {
+              skillTagsEl.innerHTML = "<span class='skill-tag'>No skills found</span>";
+            }
+            document.getElementById("userLocation").textContent = user.location || "N/A";
+
+            // Big profile picture in profile section
+            const bigProfilePic = document.getElementById("profilePic");
+            const bigDefaultIcon = document.getElementById("defaultProfileIcon");
+            if (user.profilePic) {
+              bigProfilePic.src = user.profilePic;
+              bigDefaultIcon.style.display = "none";
+            } else {
+              bigProfilePic.style.display = "none";
+              bigDefaultIcon.style.display = "block";
+            }
+
+            // Once we have the user data, fetch the projects for this user
+            fetchPublicUserProjects(user._id);
+          } else {
+            showModalAlert("Error fetching profile data", true);
+          }
+        } catch (error) {
+          console.error("Error fetching public user data:", error);
+        }
+      }
+
+      // Fetch public projects for this user using their user ID
+      async function fetchPublicUserProjects(userId) {
+        try {
+          const response = await fetch(`/api/projects/user/${userId}`);
+          const result = await response.json();
+          const projectsGrid = document.getElementById("projectsGrid");
+          if (result.success) {
+            if (result.data.length > 0) {
+              projectsGrid.innerHTML = result.data.map(project => {
+                const uploadTime = new Date(project.createdAt).toLocaleDateString();
+                let mediaHtml = `
+                  <div class="project-media">
+                    <pre class="no-preview">No preview available</pre>
+                  </div>`;
+                if (project.fileUrl && /\.(png|jpg|jpeg|gif)$/i.test(project.fileUrl)) {
+                  mediaHtml = `
+                    <div class="project-media">
+                      <img src="${project.fileUrl}" alt="${project.title}" loading="lazy" />
+                    </div>`;
+                }
+                return `
+                  <div class="project-card" onclick="viewProject('${project._id}')">
+                    <div class="card-header">
+                      <h3 class="project-title">${project.title || "Untitled"}</h3>
+                      <div class="project-info">
+                        <span class="project-time">${uploadTime}</span>
+                        <span class="project-domain">${project.domain || "N/A"}</span>
+                      </div>
+                    </div>
+                    ${mediaHtml}
+                    <div class="card-actions">
+                      <button onclick="event.stopPropagation(); viewProject('${project._id}')">View</button>
+                    </div>
+                  </div>`;
+              }).join("");
+            } else {
+              projectsGrid.innerHTML = "<p>No projects to display.</p>";
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching public projects:", error);
+        }
+      }
+
+      function viewProject(projectId) {
+        window.location.href = `/project/${projectId}`;
+      }
+
+      // Initialization: load public profile data and projects
+      document.addEventListener("DOMContentLoaded", async () => {
+        fetchPublicUserData();
+      });
+    </script>
+  </body>
+</html>

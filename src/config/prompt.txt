@@ -1,0 +1,190 @@
+ Project Overview
+🧪 Project Name: ICFAICOLLAB
+💻 Tech Stack
+Backend: Node.js, Express.js, MongoDB (Mongoose)
+
+Authentication:
+
+Local: JWT (HTTP-only cookies), bcrypt for password hashing
+
+OAuth: Google OAuth 2.0 with Passport.js
+
+Frontend: Plain HTML, CSS, JavaScript (no templating engine like EJS)
+
+File Uploads: Handled by Multer (stored in /uploads)
+
+OAuth Strategy: Passport.js with Google OAuth2
+
+🧠 Main Features
+✅ User Authentication
+Signup via:
+
+Local: Name, email, password, domain, skills, bio, profile picture
+
+Google OAuth: Name and email are pre-filled, then profile completion step collects domain, skills, bio, and optional profile picture
+
+Passwords hashed using bcrypt
+
+JWT generated and stored in HTTP-only cookies
+
+Auth middleware sets req.user using decoded token
+
+Role-based access: 'user' vs 'admin'
+
+📦 Project Management
+Users can upload projects with file attachments (image/video/zip)
+
+Each project includes:
+
+title, description, domain, file URL
+
+Projects displayed in user's dashboard
+
+📢 Ad Management + Join Requests
+Users can create ads with:
+
+title, description, domain
+
+Other users can apply by sending join requests
+
+Join request has:
+
+user reference and a status: pending, accepted, or declined
+
+Ad owner can:
+
+view incoming join requests
+
+accept or decline them
+
+Applicant can:
+
+view their sent requests and status
+
+🧑‍💼 Dashboard (user.html)
+Displays:
+
+User profile details
+
+Uploaded projects
+
+"My Team Ads" (ads created by the user)
+
+"Join Requests Received" (with Accept/Decline buttons)
+
+"My Join Requests" (status of ads user applied to)
+
+🖼️ Profile Completion Flow (For Google OAuth)
+Google OAuth signup auto-creates a minimal user (name, email, no password)
+
+Redirects to signup.html?google=true
+
+Profile completion form collects:
+
+username, bio, domain, skills, profilePic
+
+This hits PUT /api/users/update with upload.single('profilePic')
+
+The JWT cookie is already set from Google OAuth callback
+
+🔀 Key Routes (API)
+Route	Method	Description
+/api/users/signup	POST	Local signup with multipart/form-data
+/api/users/login	POST	Login with email & password
+/api/users/logout	POST	Clear token cookie
+/api/users/me	GET	Get current user
+/api/users/update	PUT	Update user (Google profile completion)
+/auth/google	GET	Trigger Google OAuth
+/auth/google/callback	GET	Google OAuth callback
+/api/projects/upload	POST	Upload a project with file
+/api/projects/my-projects	GET	Get current user's projects
+/api/ads/create	POST	Create new ad
+/api/ads	GET	View all ads
+/api/ads/my-ads	GET	View ads created by user
+/api/ads/:adId/join	POST	Send join request
+/api/ads/:adId/join/:requesterId/accept	PUT	Accept join request
+/api/ads/:adId/join/:requesterId/decline	PUT	Decline join request
+/api/ads/my-join-requests	GET	Join requests received (ad owner)
+/api/ads/my-join-requests-applicant	GET	Join requests sent (applicant)
+
+📁 Folder Structure
+pgsql
+Copy
+Edit
+API-COPY/
+├── node_modules/
+├── public/                     # Frontend HTML pages
+│   ├── about.html
+│   ├── ads.html
+│   ├── all-user.html
+│   ├── landing.html
+│   ├── login.html
+│   ├── profile.html
+│   ├── settings.html
+│   ├── signup.html             # Local + Google signup handled via modals
+│   ├── upload.html
+│   ├── user.html               # User dashboard
+│   ├── view-ads.html
+│   ├── view-project.html
+│   └── view-projects.html
+│
+├── uploads/                    # Multer file storage
+│
+├── src/
+│   ├── app.js                  # Main Express app setup
+│   ├── config/
+│   │   ├── db.js               # MongoDB connection
+│   │   ├── passport.js         # Google OAuth via Passport.js
+│   │   ├── cloudinary.js       # (Optional) Cloudinary upload config
+│   │   └── prompt.txt
+│   ├── controllers/
+│   │   ├── ad.controller.js
+│   │   ├── auth.controller.js
+│   │   ├── project.controller.js
+│   │   └── user.controller.js
+│   ├── middlewares/
+│   │   ├── auth.middleware.js  # JWT verification
+│   │   └── error.middleware.js
+│   ├── models/
+│   │   ├── ad.model.js
+│   │   ├── project.model.js
+│   │   └── user.model.js
+│   └── routes/
+│       ├── ad.routes.js
+│       ├── auth.routes.js
+│       ├── index.js
+│       ├── project.routes.js
+│       └── user.routes.js
+│
+├── .env
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── server.js                   # Loads app.js and connects DB
+
+✨ Google OAuth Flow
+User clicks “Sign up with Google”
+
+Redirects to /auth/google
+
+User signs in via Google
+
+googleStrategy.js checks if user exists:
+
+If not, creates stub user with email, name
+
+No password required for Google users
+
+JWT is issued and stored as cookie
+
+Redirects to signup.html?google=true
+
+User fills in profile → submits to PUT /api/users/update with Multer for profilePic
+🧪 Debugging Notes
+Always verify that req.user is set from the JWT middleware
+
+For ObjectId comparison, always convert using .toString() if needed
+
+Multer is configured for profilePic and project file uploads
+
+Google users don’t have passwords, so login with email+password only works for local accounts
